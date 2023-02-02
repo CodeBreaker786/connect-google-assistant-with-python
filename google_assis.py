@@ -1,33 +1,64 @@
-import requests
-from bs4 import BeautifulSoup
+import speech_recognition as sr
+import pyttsx3
+import pywhatkit
+import datetime
+import wikipedia
+import pyjokes
+from schedule import get_lecture_info
+listener = sr.Recognizer()
+engine = pyttsx3.init()
+engine.setProperty('rate',100)
+voices = engine.getProperty('voices')
+engine.setProperty('voice', voices[1].id)
 
-def query():
+
+def talk(text):
+    engine.say(text)
+    engine.runAndWait()
+
+
+def take_command():
     
-    user_query = input('Enter your query: ')
+    try:
+        with sr.Microphone() as source:
+            print('listening...')
+            voice = listener.listen(source)
+            command = listener.recognize_google(voice)
+            command = command.lower()
+            if 'alexa' in command:
+                command = command.replace('alexa', '')
+                return command
+    except:
+      pass
+    
 
-    URL = "https://www.google.co.in/search?q=" + user_query
 
-    headers = {
-    'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.90 Safari/537.36 Edg/89.0.774.57'
-    }
+def run_alexa():
+    command = take_command()
+    if command is None:
+        return
+    print(command)
+    if 'play' in command:
+        song = command.replace('play', '')
+        talk('playing ' + song)
+        pywhatkit.playonyt(song)
+    elif 'time' in command:
+        time = datetime.datetime.now().strftime('%I:%M %p')
+        talk('Current time is ' + time)
+    elif 'who is' in command:
+        person = command.replace('who the heck is', '')
+        info = wikipedia.summary(person, 1)
+        
+        talk(info)
+    elif 'date' in command:
+        talk('sorry, I have a headache')
+    elif 'are you single' in command:
+        talk('I am in a relationship with wifi')
+    elif 'joke' in command:
+        talk(pyjokes.get_joke())
+    elif 'which lecture' :
+        talk(get_lecture_info())
 
-    page = requests.get(URL, headers=headers)
-    soup = BeautifulSoup(page.content, 'html.parser')
-    result = soup.find(class_='Z0LcW XcVN5d').get_text()
-    print(result)
 
 while True:
-    try:
-        query()
-    except Exception:
-        print('Sorry no result, please be clear')
-    user_input = input('To continue press y: ')
-    if user_input != 'y':
-        break
-
-# year of first fifa world cup
-# age of ronaldo
-# height of burj khalifa
-# when was leonardo di vinci born
-# prime minister of uk
-# what is the weight of earth
+    run_alexa()
