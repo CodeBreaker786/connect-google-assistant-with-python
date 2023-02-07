@@ -5,9 +5,11 @@ import datetime
 import wikipedia
 import pyjokes
 from schedule import get_lecture_info
+from utils import questionAnswer
+from questions_response import get_question_response
 listener = sr.Recognizer()
 engine = pyttsx3.init()
-engine.setProperty('rate',100)
+engine.setProperty('rate',120)
 voices = engine.getProperty('voices')
 engine.setProperty('voice', voices[1].id)
 
@@ -45,19 +47,24 @@ def run_alexa():
     elif 'time' in command:
         time = datetime.datetime.now().strftime('%I:%M %p')
         talk('Current time is ' + time)
-    elif 'who is' in command:
-        person = command.replace('who the heck is', '')
-        info = wikipedia.summary(person, 1)
-        
-        talk(info)
+    # elif 'who is' in command:
+    #     person = command.replace('who the heck is', '')
+    #     info = wikipedia.summary(person, 1)
+        # talk(info)
     elif 'date' in command:
         talk('sorry, I have a headache')
     elif 'are you single' in command:
         talk('I am in a relationship with wifi')
     elif 'joke' in command:
         talk(pyjokes.get_joke())
-    elif 'which lecture' :
+    elif 'which lecture' in command:
         talk(get_lecture_info())
+    elif [val for key, val in questionAnswer.items() if key.lower() in command.lower() ]!=[]:
+        talk([val for key, val in questionAnswer.items() if key.lower() in command.lower() ][0])
+    else:
+     talk("Not understand you please try again")
+       
+        
 
 
 while True:

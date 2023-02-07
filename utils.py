@@ -11,11 +11,11 @@ def timeStrToTime(time):
 
 
 questionAnswer={
-    'Who is the principal of ATHS Ras Al Khaima?':' Dr. Naser Alsab',
-    'In which block will is 11 CAI': ' B Block',
-    'When will the end of term 3 exams be? ':' We are still not sure when will it be but we will keep you updated',
-    'when does term 2 student vacation start?': '27/3/2023',
-    'when will the report cards be announced?  ' :' We are still not sure when will it be but we will keep you updated',
-    'How many majors are in ATHS RAK?' : 'There are ASP, Advance, General, ENI, CAI, AET, AEA',
-    'someone is bullying me. What should I do?' : 'You can visit the student counsellor at B block',    
+    'principal':' Dr. Naser Alsab',
+    'block': ' B Block',
+    'term 3 exams be':' We are still not sure when will it be but we will keep you updated',
+    'vacation start': '27/3/2023',
+    'report cards' :' We are still not sure when will it be but we will keep you updated',
+    'how many majors are' : 'There are ASP, Advance, General, ENI, CAI, AET, AEA',
+    'what should I do' : 'You can visit the student counsellor at B block',    
     }
