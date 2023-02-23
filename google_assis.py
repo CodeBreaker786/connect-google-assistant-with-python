@@ -9,10 +9,10 @@ from utils import questionAnswer
 from questions_response import get_question_response
 listener = sr.Recognizer()
 engine = pyttsx3.init()
-engine.setProperty('rate',120)
-voices = engine.getProperty('voices')
-engine.setProperty('voice', voices[1].id)
-
+# engine.setProperty('rate',120)
+# voices = engine.getProperty('voices')
+# engine.setProperty('voice', voices[1].id)
+print(sr.Microphone.list_microphone_names())
 
 def talk(text):
     engine.say(text)
@@ -23,6 +23,7 @@ def take_command():
     
     try:
         with sr.Microphone() as source:
+            # listener.adjust_for_ambient_noise(source,duration=1)
             print('listening...')
             voice = listener.listen(source)
             command = listener.recognize_google(voice)
