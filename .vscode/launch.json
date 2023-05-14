@@ -8,7 +8,7 @@
           "name": "Python: Current File",
           "type": "python",
           "request": "launch",
-          "python": "${workspaceFolder}/venv/Scripts/python",
+          "python": "${workspaceFolder}/venv/bin/python",
           "program": "${workspaceFolder}/main.py",
 
           "justMyCode": true

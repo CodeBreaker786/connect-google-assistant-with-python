@@ -1,85 +1,73 @@
-import os
-import openai
-from dotenv import load_dotenv
-import time
 import speech_recognition as sr
-import pyttsx3
-import numpy as np
-# from os.path import join, dirname
-# import matplotlib.pyplot as plt
-# ^ matplotlib is great for visualising data and for testing purposes but usually not needed for production
+import pywhatkit
+import datetime
+import pyjokes
+from schedule import get_lecture_info
+from utils import questionAnswer
+from questions_response import get_question_response
+import gtts  
+from playsound import playsound  
+print(sr.Microphone.list_microphone_names())
 
-load_dotenv()
-openai.api_key = os.getenv('OPENAI_API_KEY')
-model = 'gpt-3.5-turbo'
-# Set up the speech recognition and text-to-speech engines
-r = sr.Recognizer()
-engine = pyttsx3.init()
-voice = engine.getProperty('voices')[1]
-engine.setProperty('voice', voice.id)
-name = "YOUR NAME HERE"
-greetings = [f"whats up master {name}", 
-             "yeah?", 
-             "Well, hello there, Master of Puns and Jokes - how's it going today?",
-             f"Ahoy there, Captain {name}! How's the ship sailing?",
-             f"Bonjour, Monsieur {name}! Comment ça va? Wait, why the hell am I speaking French?" ]
  
-# Listen for the wake word "hey pos"
-def listen_for_wake_word(source):
-    r.adjust_for_ambient_noise(source)
-    print("Listening for 'Hey POS'...")
+r = sr.Recognizer()
 
-    while True:
-        audio = r.listen(source)
-        try:
-            text = r.recognize_google(audio)
-            print(text)
-            if "hey pos" in text.lower():
-                print("Wake word detected.")
-                print(text)
-                engine.say(np.random.choice(greetings))
-                engine.runAndWait()
-                listen_and_respond(source)
-                break
-        except sr.UnknownValueError:
-            pass
+def take_command():
+    try:
+        with sr.Microphone() as source:
+            r = sr.Recognizer()
+            print('listening...')
+            audio_text = r.listen(source)
+            command=r.recognize_google(audio_text)
+            command = command.lower()
+            print(command)
+            if 'future' in command:
+                command = command.replace('future','')
+                return command
+    except:
+      pass
+    
 
-# Listen for input and respond with OpenAI API
-def listen_and_respond(source):
-    print("Listening...")
+def speak(text):
+    t1 = gtts.gTTS(text)
+    t1.save("sound.mp3")  
+    playsound("sound.mp3")  
+      
+    
+    
+    
+    
+def run_alexa():
+    command = take_command()
+    if command is None:
+        return
+    print(command)
+    if 'play' in command:
+        song = command.replace('play', '')
+        pywhatkit.playonyt(song)
+        
+    elif 'time' in command:
+        time = datetime.datetime.now().strftime('%I:%M %p')
+        speak('Current time is ' + time)
+    # elif 'who is' in command:
+    #     person = command.replace('who the heck is', '')
+    #     info = wikipedia.summary(person, 1)
+        # talk(info)
+    elif 'date' in command:
+        speak('sorry, I have a headache')
+    elif 'are you single' in command:
+        speak('I am in a relationship with wifi')
+    elif 'joke' in command:
+        speak(pyjokes.get_joke())
+    elif 'which lecture' in command:
+        speak(get_lecture_info())
+    elif [val for key, val in questionAnswer.items() if key.lower() in command.lower() ]!=[]:
+        speak([val for key, val in questionAnswer.items() if key.lower() in command.lower() ][0])
+    else:
+     speak("Not understand you please try again")
+       
+        
 
-    while True:
-        audio = r.listen(source)
-        try:
-            text = r.recognize_google(audio)
-            print(f"You said: {text}")
-            if not text:
-                continue
 
-            # Send input to OpenAI API
-            response = openai.ChatCompletion.create(model="gpt-3.5-turbo", messages=[{"role": "user", "content": f"{text}"}]) 
-            response_text = response.choices[0].message.content
-            print(f"OpenAI response: {response_text}")
-
-            # Speak the response
-            engine.say(response_text)
-            engine.runAndWait()
-
-            if not audio:
-                listen_for_wake_word(source)
-        except sr.UnknownValueError:
-            time.sleep(2)
-            print("Silence found, shutting up, listening...")
-            listen_for_wake_word(source)
-            break
-            
-        except sr.RequestError as e:
-            print(f"Could not request results; {e}")
-            engine.say(f"Could not request results; {e}")
-            engine.runAndWait()
-            listen_for_wake_word(source)
-            break
-
-# Use the default microphone as the audio source
-with sr.Microphone() as source:
-    listen_for_wake_word(source)
+while True:
+    run_alexa()

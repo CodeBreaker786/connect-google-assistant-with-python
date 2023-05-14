@@ -18,6 +18,9 @@ def get_lecture_info():
     with open('schedule.csv', mode='r') as csv_file:
         csv_reader = csv.DictReader(csv_file)
         for row in csv_reader:
+            if 'Sunday'==day:
+                return "There is no lecture on sunday"
+                
 
             if row['Days']==day:
                 row.pop('Days')
