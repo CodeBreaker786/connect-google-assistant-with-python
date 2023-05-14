@@ -8,7 +8,8 @@ from questions_response import get_question_response
 import gtts  
 from playsound import playsound  
 print(sr.Microphone.list_microphone_names())
-
+import pygame
+pygame.init()
  
 r = sr.Recognizer()
 
@@ -30,8 +31,12 @@ def take_command():
 
 def speak(text):
     t1 = gtts.gTTS(text)
-    t1.save("sound.mp3")  
-    playsound("sound.mp3")  
+    t1.save("sound.mp3") 
+    my_sound = pygame.mixer.Sound('sound.mp3') 
+    playing=my_sound.play()
+    while playing.get_busy():
+      pygame.time.delay(100)
+   
       
     
     
